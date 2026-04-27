@@ -1,6 +1,6 @@
 # 🏢 HR Go API
 
-> Project belajar pertama gue pakai **Golang + Gin Framework** — sebuah REST API untuk sistem Human Resources sederhana.
+> Project belajar pertama menggunakan **Golang + Gin Framework** — sebuah REST API untuk sistem Human Resources sederhana.
 
 ## Tech Stack
 
@@ -11,6 +11,7 @@
 | **GORM** | ORM untuk database |
 | **PostgreSQL** | Database |
 | **JWT** | Autentikasi token |
+| **Swagger** | API documentation |
 
 ## Fitur
 
@@ -20,12 +21,14 @@
 - 📄 **Pagination & Search** — Semua list endpoint mendukung pagination dan pencarian
 - 🔒 **JWT Middleware** — Proteksi endpoint dengan token
 - 🌐 **CORS** — Siap diakses dari frontend
+- 📖 **Swagger** — Dokumentasi API interaktif (`/swagger/index.html`)
 
 ## Struktur Project
 
 ```
 hr-go-api/
 ├── cmd/api/main.go              # Entry point
+├── docs/                        # Swagger generated docs
 ├── internal/
 │   ├── config/                  # Konfigurasi (.env)
 │   ├── database/                # Koneksi, migrasi, seeder
@@ -35,6 +38,7 @@ hr-go-api/
 │   ├── models/                  # Model database (GORM)
 │   ├── repository/              # Data access layer
 │   └── service/                 # Business logic
+├── mocks/                       # Mock untuk unit testing
 ├── pkg/
 │   ├── hash/                    # Bcrypt helper
 │   ├── jwt/                     # JWT generate & validate
@@ -77,7 +81,14 @@ JWT_EXPIRE_HOURS=1
 createdb human_resources
 ```
 
-### 4. Install dependencies & jalankan
+### 4. Generate Swagger docs
+
+```bash
+go install github.com/swaggo/swag/cmd/swag@latest
+swag init -g cmd/api/main.go
+```
+
+### 5. Install dependencies & jalankan
 
 ```bash
 go mod tidy
@@ -85,6 +96,20 @@ go run cmd/api/main.go
 ```
 
 Server akan berjalan di `http://localhost:8080`. Migrasi dan seed data otomatis dijalankan saat start.
+
+## 📖 Swagger Documentation
+
+Akses Swagger UI di browser (hanya tersedia di mode non-production):
+
+```
+http://localhost:8080/swagger/index.html
+```
+
+Untuk regenerate docs setelah mengubah annotation:
+
+```bash
+swag init -g cmd/api/main.go
+```
 
 ## API Endpoints
 
@@ -120,60 +145,6 @@ Server akan berjalan di `http://localhost:8080`. Migrasi dan seed data otomatis 
 | POST | `/api/employee/create` | Tambah karyawan baru |
 | PUT | `/api/employee/:id` | Update karyawan |
 | DELETE | `/api/employee/:id` | Hapus karyawan (soft delete) |
-
-## Contoh Request
-
-### Register
-
-```bash
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Rhea Davin", "email": "rheadavin@yopmail.com", "password": "password123"}'
-```
-
-### Login
-
-```bash
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email": "rheadavin@yopmail.com", "password": "password123"}'
-```
-
-### Create Employee (pakai token)
-
-```bash
-curl -X POST http://localhost:8080/api/employee/create \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_token>" \
-  -d '{
-    "nik": "EMP001",
-    "full_name": "John Doe",
-    "email": "john@example.com",
-    "phone": "08123456789",
-    "position": "Backend Developer",
-    "salary": 15000000,
-    "join_date": "2026-01-15",
-    "division_id": 1
-  }'
-```
-
-### List Employee (pagination & search)
-
-```bash
-curl -X POST http://localhost:8080/api/employee/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_token>" \
-  -d '{"page": 1, "limit": 10}'
-```
-
-Dengan search:
-
-```bash
-curl -X POST http://localhost:8080/api/employee/ \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <your_token>" \
-  -d '{"page": 1, "limit": 10, "search": "John"}'
-```
 
 ## Health Check
 
