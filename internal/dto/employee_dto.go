@@ -7,7 +7,7 @@ import (
 type CreateEmployeeRequest struct {
 	NIK        string     `json:"nik" binding:"required"`
 	FullName   string     `json:"full_name" binding:"required"`
-	Email      string     `json:"email" binding:"required"`
+	Email      string     `json:"email" binding:"required,email"`
 	Phone      string     `json:"phone" binding:"required"`
 	Position   string     `json:"position" binding:"required"`
 	Salary     float64    `json:"salary" binding:"required"`
@@ -18,7 +18,7 @@ type CreateEmployeeRequest struct {
 type UpdateEmployeeRequest struct {
 	NIK        string     `json:"nik" binding:"required"`
 	FullName   string     `json:"full_name" binding:"required"`
-	Email      string     `json:"email" binding:"required"`
+	Email      string     `json:"email" binding:"required,email"`
 	Phone      string     `json:"phone" binding:"required"`
 	Position   string     `json:"position" binding:"required"`
 	Salary     float64    `json:"salary" binding:"required"`

@@ -14,6 +14,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	r := gin.New()
 
 	r.Use(gin.Recovery())
+	r.Use(middleware.CORS())
 	r.Use(middleware.CustomLogger())
 
 	// dependency injection

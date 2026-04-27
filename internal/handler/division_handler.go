@@ -12,10 +12,10 @@ import (
 )
 
 type DivisionHandler struct {
-	divisionService *service.DivisionService
+	divisionService service.DivisionServiceInterface
 }
 
-func NewDivisionHandler(divisionService *service.DivisionService) *DivisionHandler {
+func NewDivisionHandler(divisionService service.DivisionServiceInterface) *DivisionHandler {
 	return &DivisionHandler{divisionService: divisionService}
 }
 
@@ -23,7 +23,7 @@ func (h *DivisionHandler) FindAll(c *gin.Context) {
 	var req dto.ListDivisionRequest
 
 	req.Page = 1
-	req.Limit = 1
+	req.Limit = 10
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -45,7 +45,11 @@ func (h *DivisionHandler) FindAll(c *gin.Context) {
 }
 
 func (h *DivisionHandler) FindByID(c *gin.Context) {
-	divisionId, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	divisionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, "Invalid division ID")
+		return
+	}
 
 	division, err := h.divisionService.FindByID(uint(divisionId))
 	if err != nil {
@@ -74,7 +78,11 @@ func (h *DivisionHandler) Create(c *gin.Context) {
 }
 
 func (h *DivisionHandler) Update(c *gin.Context) {
-	divisionId, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	divisionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, "Invalid division ID")
+		return
+	}
 
 	var req dto.UpdateDivisionRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -92,9 +100,13 @@ func (h *DivisionHandler) Update(c *gin.Context) {
 }
 
 func (h *DivisionHandler) Delete(c *gin.Context) {
-	divisionId, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	divisionId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, "Invalid division ID")
+		return
+	}
 
-	err := h.divisionService.Delete(uint(divisionId))
+	err = h.divisionService.Delete(uint(divisionId))
 	if err != nil {
 		response.ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

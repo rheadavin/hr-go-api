@@ -22,7 +22,7 @@ func NewEmployeeHandler(empService *service.EmployeeService) *EmployeeHandler {
 func (h *EmployeeHandler) FindAll(c *gin.Context) {
 	var req dto.ListEmployeeRequest
 	req.Page = 1
-	req.Limit = 1
+	req.Limit = 10
 	if err := c.ShouldBindJSON(&req); err != nil {
 		response.ErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -59,7 +59,11 @@ func (h *EmployeeHandler) Create(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) FindByID(c *gin.Context) {
-	empId, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	empId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, "Invalid employee ID")
+		return
+	}
 
 	employee, err := h.empService.FindByID(uint(empId))
 	if err != nil {
@@ -71,7 +75,11 @@ func (h *EmployeeHandler) FindByID(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) Update(c *gin.Context) {
-	empId, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	empId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, "Invalid employee ID")
+		return
+	}
 
 	var req dto.UpdateEmployeeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -89,9 +97,13 @@ func (h *EmployeeHandler) Update(c *gin.Context) {
 }
 
 func (h *EmployeeHandler) Delete(c *gin.Context) {
-	empId, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	empId, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		response.ErrorResponse(c, http.StatusBadRequest, "Invalid employee ID")
+		return
+	}
 
-	err := h.empService.Delete(uint(empId))
+	err = h.empService.Delete(uint(empId))
 	if err != nil {
 		response.ErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

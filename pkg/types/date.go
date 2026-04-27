@@ -38,3 +38,10 @@ func (d *Date) Scan(value interface{}) error {
 	d.Time = t
 	return nil
 }
+
+func (d Date) MarshalJSON() ([]byte, error) {
+	if d.Time.IsZero() {
+		return []byte(`""`), nil
+	}
+	return []byte(fmt.Sprintf(`"%s"`, d.Time.Format("2006-01-02"))), nil
+}

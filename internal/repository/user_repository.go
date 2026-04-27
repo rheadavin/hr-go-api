@@ -5,6 +5,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepositoryInterface interface {
+	Create(user *models.User) error
+	FindAll(page, limit int, search string) ([]models.User, int64, error)
+	FindByID(id uint) (*models.User, error)
+	FindByEmail(email string) (*models.User, error)
+	Update(id uint, data map[string]interface{}) error
+	Delete(id uint) error
+}
+
 type UserRepository struct {
 	db *gorm.DB
 }

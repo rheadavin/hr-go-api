@@ -8,6 +8,14 @@ import (
 	"github.com/rheadavin/hr-go-api/internal/repository"
 )
 
+type DivisionServiceInterface interface {
+	Create(req dto.CreateDivisionRequest) (*dto.DivisionResponse, error)
+	FindAll(page, limit int, search string) ([]dto.DivisionResponse, int64, error)
+	FindByID(id uint) (*models.Division, error)
+	Update(id uint, req dto.UpdateDivisionRequest) (*dto.DivisionResponse, error)
+	Delete(id uint) error
+}
+
 type DivisionService struct {
 	divisionRepo *repository.DivisionRepository
 }

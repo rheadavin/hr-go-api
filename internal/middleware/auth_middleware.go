@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rheadavin/hr-go-api/pkg/jwt"
-	response "github.com/rheadavin/hr-go-api/pkg/reponse"
+	"github.com/rheadavin/hr-go-api/pkg/response"
 )
 
 func Auth() gin.HandlerFunc {

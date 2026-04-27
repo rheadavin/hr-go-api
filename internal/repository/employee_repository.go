@@ -6,6 +6,14 @@ import (
 	"gorm.io/gorm"
 )
 
+type EmployeeRepositoryInterface interface {
+	Create(employee *models.Employee) error
+	FindAll(page, limit int, search string) ([]dto.EmployeeResponse, int64, error)
+	FindByID(id uint) (*models.Employee, error)
+	Update(id uint, data *models.Employee) error
+	Delete(id uint) error
+}
+
 type EmployeeRepository struct {
 	db *gorm.DB
 }
@@ -25,9 +33,11 @@ func (r *EmployeeRepository) Create(employee *models.Employee) error {
 
 // get all
 func (r *EmployeeRepository) FindAll(page, limit int, search string) ([]dto.EmployeeResponse, int64, error) {
-	var employees []dto.EmployeeResponse
+	var employees []models.Employee
 	var total int64
-	query := r.db.Model(&models.Employee{}).Select("id", "nik", "full_name", "email", "is_active", "division_id").Preload("Division").Where("is_active = ?", true)
+	query := r.db.Model(&models.Employee{}).
+		Preload("Division").
+		Where("is_active = ?", true)
 
 	// Filter search
 	if search != "" {
@@ -44,9 +54,28 @@ func (r *EmployeeRepository) FindAll(page, limit int, search string) ([]dto.Empl
 	offset := (page - 1) * limit
 	err := query.Offset(offset).Limit(limit).
 		Order("created_at DESC").
-		Scan(&employees).Error
+		Find(&employees).Error
 
-	return employees, total, err
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var result []dto.EmployeeResponse
+	for _, emp := range employees {
+		result = append(result, dto.EmployeeResponse{
+			ID:         emp.ID,
+			NIK:        emp.NIK,
+			FullName:   emp.FullName,
+			Email:      emp.Email,
+			DivisionID: emp.DivisionID,
+			Division: dto.DivisionResponse{
+				ID:   emp.Division.ID,
+				Name: emp.Division.Name,
+			},
+		})
+	}
+
+	return result, total, nil
 }
 
 // get by id

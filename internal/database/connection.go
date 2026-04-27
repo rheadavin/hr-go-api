@@ -34,7 +34,10 @@ func Connect() {
 	}
 
 	// Connection Pool settings
-	sqlDB, _ := DB.DB()
+	sqlDB, err := DB.DB()
+	if err != nil {
+		log.Fatal("Failed to get database instance:", err)
+	}
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 
