@@ -11,7 +11,7 @@ type CreateEmployeeRequest struct {
 	Phone      string     `json:"phone" binding:"required"`
 	Position   string     `json:"position" binding:"required"`
 	Salary     float64    `json:"salary" binding:"required"`
-	JoinDate   types.Date `json:"join_date" binding:"required" time_format:"2006-01-02"`
+	JoinDate   types.Date `json:"join_date" binding:"required" swaggertype:"string" format:"date" time_format:"2006-01-02"`
 	DivisionID uint       `json:"division_id" binding:"required"`
 }
 
@@ -22,7 +22,7 @@ type UpdateEmployeeRequest struct {
 	Phone      string     `json:"phone" binding:"required"`
 	Position   string     `json:"position" binding:"required"`
 	Salary     float64    `json:"salary" binding:"required"`
-	JoinDate   types.Date `json:"join_date" binding:"required" time_format:"2006-01-02"`
+	JoinDate   types.Date `json:"join_date" binding:"required" swaggertype:"string" format:"date" time_format:"2006-01-02"`
 	DivisionID uint       `json:"division_id" binding:"required"`
 }
 

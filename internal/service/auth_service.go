@@ -18,7 +18,7 @@ func NewAuthService(userRepo repository.UserRepositoryInterface) *AuthService {
 	return &AuthService{userRepo: userRepo}
 }
 
-func (s *AuthService) Register(req dto.RegisterRequest) (*models.User, error) {
+func (s *AuthService) Register(req dto.RegisterRequest) (*dto.RegisterResponse, error) {
 	// cek email sudah ada
 	_, err := s.userRepo.FindByEmail(req.Email)
 	if err == nil {
@@ -42,7 +42,11 @@ func (s *AuthService) Register(req dto.RegisterRequest) (*models.User, error) {
 		return nil, errors.New("failed to create user")
 	}
 
-	return &user, nil
+	return &dto.RegisterResponse{
+		Name:  user.Name,
+		Email: user.Email,
+		Role:  user.Role,
+	}, nil
 }
 
 func (s *AuthService) Login(req dto.LoginRequest) (*dto.LoginResponse, error) {

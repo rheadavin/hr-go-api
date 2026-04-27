@@ -90,8 +90,13 @@ func (r *EmployeeRepository) FindByID(id uint) (*models.Employee, error) {
 
 // update
 func (r *EmployeeRepository) Update(id uint, data *models.Employee) error {
-	if err := r.db.Model(&models.Employee{}).Where("id = ? AND is_active = ?", id, true).Updates(data).Error; err != nil {
-		return err
+	result := r.db.Model(&models.Employee{}).Where("id = ? AND is_active = ?", id, true).Updates(data)
+
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
 	}
 
 	return r.db.Preload("Division").First(data, id).Error

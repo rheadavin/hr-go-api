@@ -1,12 +1,16 @@
 package router
 
 import (
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/rheadavin/hr-go-api/internal/config"
 	"github.com/rheadavin/hr-go-api/internal/handler"
 	"github.com/rheadavin/hr-go-api/internal/middleware"
 	"github.com/rheadavin/hr-go-api/internal/repository"
 	"github.com/rheadavin/hr-go-api/internal/service"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
@@ -16,6 +20,10 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	r.Use(gin.Recovery())
 	r.Use(middleware.CORS())
 	r.Use(middleware.CustomLogger())
+
+	if os.Getenv("APP_ENV") != "production" {
+		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	}
 
 	// dependency injection
 	// repositories

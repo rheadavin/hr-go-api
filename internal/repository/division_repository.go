@@ -61,7 +61,15 @@ func (r *DivisionRepository) FindByID(id uint) (*models.Division, error) {
 }
 
 func (r *DivisionRepository) Update(id uint, data *models.Division) error {
-	return r.db.Model(&models.Division{}).Where("id = ? AND is_active = ?", id, true).Updates(data).Error
+	result := r.db.Model(&models.Division{}).Where("id = ? AND is_active = ?", id, true).Updates(data)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+
+	return result.Error
 }
 
 func (r *DivisionRepository) Delete(id uint) error {
