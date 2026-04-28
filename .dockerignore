@@ -1,0 +1,7 @@
+.git
+.gitignore
+bin/
+build/
+dist/
+*.log
+.DS_Store
